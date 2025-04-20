@@ -2,6 +2,10 @@ from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 import socket
 import threading
+import eventlet
+
+# Usando eventlet para suportar conexões simultâneas
+eventlet.monkey_patch()
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -41,12 +45,8 @@ def start_server():
 def run_tcp_server():
     threading.Thread(target=start_server, daemon=True).start()
 
-# Função para iniciar o Flask e SocketIO
-def start_flask():
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
-
 if __name__ == '__main__':
     # Inicia o servidor TCP antes de iniciar o Flask
     run_tcp_server()
-    # Inicia o Flask e o SocketIO
-    start_flask()
+    # Inicia o Flask e o SocketIO com eventlet
+    eventlet.wsgi.server(eventlet.listen(('0.0.0.0', 5000)), app)
