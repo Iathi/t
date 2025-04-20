@@ -1,33 +1,44 @@
+from flask import Flask, render_template
+from flask_socketio import SocketIO, emit
 import socket
+import threading
 
-# Configuração do servidor
-HOST = '0.0.0.0'  # Escuta em todas as interfaces
-PORT = 5000       # Porta que será escutada
+app = Flask(__name__)
+socketio = SocketIO(app)
 
-# Criação do socket TCP
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind((HOST, PORT))
-server_socket.listen(1)  # Aceita uma conexão por vez
+# Função para lidar com conexões TCP
+def handle_client(conn):
+    try:
+        while True:
+            data = conn.recv(1024)
+            if not data:
+                break
+            print(f"Recebido do cliente: {data.decode()}")
+            # Enviar a mensagem para todos os clientes conectados ao WebSocket
+            socketio.emit('server_message', {'message': data.decode()})
+            conn.sendall(b"Mensagem recebida\n")
+    finally:
+        conn.close()
 
-print(f"[+] Escutando em {HOST}:{PORT}...")
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-try:
-    conn, addr = server_socket.accept()
-    print(f"[+] Conexão recebida de {addr[0]}:{addr[1]}")
-
-    # Loop para comunicação
+def start_server():
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind(('0.0.0.0', 5000))
+    server_socket.listen(1)
+    print("Servidor TCP escutando na porta 5000...")
+    
     while True:
-        data = conn.recv(1024)
-        if not data:
-            break
-        print(f"[>] Cliente disse: {data.decode().strip()}")
-        conn.sendall(b"Mensagem recebida\n")  # Resposta simples
+        conn, addr = server_socket.accept()
+        print(f"Conexão recebida de {addr}")
+        threading.Thread(target=handle_client, args=(conn,)).start()
 
-    conn.close()
-    print("[*] Conexão encerrada.")
+# Roda o servidor TCP em uma thread separada
+@app.before_first_request
+def before_first_request():
+    threading.Thread(target=start_server).start()
 
-except KeyboardInterrupt:
-    print("\n[!] Encerrando servidor...")
-finally:
-    server_socket.close()
-
+if __name__ == '__main__':
+    socketio.run(app, host='0.0.0.0', port=5001)
