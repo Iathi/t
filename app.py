@@ -28,9 +28,9 @@ def index():
 # Função que roda o servidor TCP em uma thread separada
 def start_server():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind(('0.0.0.0', 5000))  # A escutar na porta 5000
+    server_socket.bind(('0.0.0.0', 5001))  # A escutar na porta 5000
     server_socket.listen(1)
-    print("Servidor TCP escutando na porta 5000...")
+    print("Servidor TCP escutando na porta 5001...")
     
     while True:
         conn, addr = server_socket.accept()
@@ -45,4 +45,4 @@ if __name__ == '__main__':
     # Inicia o servidor TCP antes de iniciar o Flask
     run_tcp_server()
     # Inicia o Flask e o SocketIO
-    socketio.run(app, host='0.0.0.0', port=5000, allow_unsafe_werkzeug=True)
+    socketio.run(app, host='0.0.0.0', port=5001, allow_unsafe_werkzeug=True)
