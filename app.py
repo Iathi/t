@@ -45,4 +45,4 @@ if __name__ == '__main__':
     # Inicia o servidor TCP antes de iniciar o Flask
     run_tcp_server()
     # Inicia o Flask e o SocketIO
-    socketio.run(app, host='0.0.0.0', port=5001)
+    socketio.run(app, host='0.0.0.0', port=5001, allow_unsafe_werkzeug=True)
