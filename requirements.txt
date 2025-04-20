@@ -2,3 +2,4 @@ quart
 telethon
 flask_socketio
 Flask
+eventlet
