@@ -1,2 +1,3 @@
 quart
 telethon
+flask_socketio
