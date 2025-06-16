@@ -1,0 +1,357 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Painel Bot Telegram{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="h3 mb-4">
+            <i class="fas fa-chart-line text-primary me-2"></i>
+            System Overview
+        </h1>
+    </div>
+</div>
+
+<!-- Status Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5>Status do Bot</h5>
+                        <h3 id="bot-status">Ativo</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-robot fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5>Total de Usuários</h5>
+                        <h3 id="total-users">{{ config.get('statistics', {}).get('total_users', 0) }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5>Tickets Criados</h5>
+                        <h3 id="total-tickets">{{ config.get('statistics', {}).get('total_tickets', 0) }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-ticket-alt fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5>Buscas na FAQ</h5>
+                        <h3 id="faq-searches">{{ config.get('statistics', {}).get('faq_searches', 0) }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-search fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-bolt text-warning me-2"></i>
+                    Ações Rápidas
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="btn-group w-100 mb-3" role="group">
+                            <button class="btn btn-success" onclick="startBot()" id="start-bot-btn">
+                                <i class="fas fa-play me-1"></i>
+                                Iniciar
+                            </button>
+                            <button class="btn btn-warning" onclick="restartBot()" id="restart-bot-btn">
+                                <i class="fas fa-sync-alt me-1"></i>
+                                Reiniciar
+                            </button>
+                        </div>
+                        <div id="bot-status" class="text-center mb-2">
+                            <span class="badge bg-secondary">Verificando...</span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <a href="{{ url_for('faq_management') }}" class="btn btn-outline-info btn-lg w-100 h-100 d-flex flex-column justify-content-center align-items-center">
+                            <i class="fas fa-question-circle mb-2" style="font-size: 1.5rem;"></i>
+                            <span class="fw-semibold">Gerenciar FAQ</span>
+                            <small class="text-muted mt-1">Editar perguntas</small>
+                        </a>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <a href="{{ url_for('logs_viewer') }}" class="btn btn-outline-dark btn-lg w-100 h-100 d-flex flex-column justify-content-center align-items-center">
+                            <i class="fas fa-file-alt mb-2" style="font-size: 1.5rem;"></i>
+                            <span class="fw-semibold">Ver Logs</span>
+                            <small class="text-muted mt-1">Monitorar sistema</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Configuration Overview -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle text-info me-2"></i>
+                    Informações do Bot
+                </h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr>
+                        <td><strong>Nome do Bot:</strong></td>
+                        <td>{{ config.bot_settings.bot_name }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Contato de Suporte:</strong></td>
+                        <td>{{ config.bot_settings.support_contact }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Email de Suporte:</strong></td>
+                        <td>{{ config.bot_settings.support_email }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Resposta Automática:</strong></td>
+                        <td>
+                            {% if config.bot_settings.auto_reply %}
+                                <span class="badge bg-success">Ativada</span>
+                            {% else %}
+                                <span class="badge bg-danger">Desativada</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-bar text-success me-2"></i>
+                    Estatísticas Rápidas
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="border-end">
+                            <h4 class="text-primary" id="menu-faq">
+                                {% if config.get('menu_settings', {}).get('show_faq', True) %}Ativo{% else %}Inativo{% endif %}
+                            </h4>
+                            <small class="text-muted">Menu FAQ</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <h4 class="text-info" id="menu-contact">
+                            {% if config.get('menu_settings', {}).get('show_contact', True) %}Ativo{% else %}Inativo{% endif %}
+                        </h4>
+                        <small class="text-muted">Menu Contato</small>
+                    </div>
+
+<script>
+// Verificar status do bot ao carregar página
+document.addEventListener('DOMContentLoaded', function() {
+    checkBotStatus();
+    // Verificar status a cada 30 segundos
+    setInterval(checkBotStatus, 30000);
+});
+
+async function checkBotStatus() {
+    try {
+        const response = await fetch('/api/bot_status');
+        const data = await response.json();
+
+        if (data.success) {
+            const statusElement = document.getElementById('bot-status');
+            const startBtn = document.getElementById('start-bot-btn');
+            const restartBtn = document.getElementById('restart-bot-btn');
+
+            if (data.is_running) {
+                statusElement.innerHTML = '<span class="badge bg-success">🟢 Bot Rodando</span>';
+                startBtn.disabled = true;
+                restartBtn.disabled = false;
+            } else {
+                statusElement.innerHTML = '<span class="badge bg-danger">🔴 Bot Parado</span>';
+                startBtn.disabled = false;
+                restartBtn.disabled = true;
+            }
+        }
+    } catch (error) {
+        console.error('Erro ao verificar status:', error);
+        document.getElementById('bot-status').innerHTML = '<span class="badge bg-warning">⚠️ Status Desconhecido</span>';
+    }
+}
+
+async function startBot() {
+    try {
+        const response = await fetch('/api/start_bot', { method: 'POST' });
+        const data = await response.json();
+
+        if (data.success) {
+            showToast(data.message, 'success');
+            setTimeout(checkBotStatus, 2000);
+        } else {
+            showToast(data.message, 'error');
+        }
+    } catch (error) {
+        showToast('Erro ao iniciar bot: ' + error.message, 'error');
+    }
+}
+
+async function stopBot() {
+    if (confirm('Tem certeza que deseja parar o bot?')) {
+        try {
+            const response = await fetch('/api/stop_bot', { method: 'POST' });
+            const data = await response.json();
+
+            if (data.success) {
+                showToast(data.message, 'success');
+                setTimeout(checkBotStatus, 2000);
+            } else {
+                showToast(data.message, 'error');
+            }
+        } catch (error) {
+            showToast('Erro ao parar bot: ' + error.message, 'error');
+        }
+    }
+}
+
+async function restartBot() {
+    if (confirm('Tem certeza que deseja reiniciar o bot?')) {
+        try {
+            showToast('Reiniciando bot...', 'info');
+            const response = await fetch('/api/restart_bot', { method: 'POST' });
+            const data = await response.json();
+
+            if (data.success) {
+                showToast(data.message, 'success');
+                setTimeout(checkBotStatus, 3000);
+            } else {
+                showToast(data.message, 'error');
+            }
+        } catch (error) {
+            showToast('Erro ao reiniciar bot: ' + error.message, 'error');
+        }
+    }
+}
+</script>
+
+                </div>
+                <hr>
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="border-end">
+                            <h4 class="text-warning" id="menu-report">
+                                {% if config.get('menu_settings', {}).get('show_report_issue', True) %}Ativo{% else %}Inativo{% endif %}
+                            </h4>
+                            <small class="text-muted">Reportar Problema</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <h4 class="text-success" id="menu-categories">
+                            {% if config.get('menu_settings', {}).get('show_categories', True) %}Ativo{% else %}Inativo{% endif %}
+                        </h4>
+                        <small class="text-muted">Categorias</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-clock text-primary me-2"></i>
+                    Atividade Recente
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush" id="recent-activity">
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-user text-primary me-2"></i>
+                            Bot inicializado com sucesso
+                        </div>
+                        <small class="text-muted">Agora</small>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-cog text-secondary me-2"></i>
+                            Configurações carregadas
+                        </div>
+                        <small class="text-muted">2 min atrás</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Atualizar estatísticas automaticamente
+function updateStatistics() {
+    fetch('/api/statistics')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('total-users').textContent = data.total_users || 0;
+            document.getElementById('total-tickets').textContent = data.total_tickets || 0;
+            document.getElementById('faq-searches').textContent = data.faq_searches || 0;
+        })
+        .catch(error => console.error('Erro ao atualizar estatísticas:', error));
+}
+
+// Atualizar a cada 30 segundos
+setInterval(updateStatistics, 30000);
+
+// Atualizar na carga da página
+document.addEventListener('DOMContentLoaded', updateStatistics);
+</script>
+{% endblock %}

@@ -1,0 +1,74 @@
+~/workspace$ python main.py 
+2025-06-16 18:57:22,544 - __main__ - INFO - 🚀 Iniciando Sistema de Suporte Telegram...
+2025-06-16 18:57:22,545 - __main__ - INFO - ✅ Sistema iniciado com sucesso!
+2025-06-16 18:57:22,545 - __main__ - INFO - 🌐 Painel web: http://0.0.0.0:5000
+2025-06-16 18:57:22,545 - __main__ - INFO - ⏹️ Pressione Ctrl+C para parar
+2025-06-16 18:57:22,867 - dotenv.main - WARNING - python-dotenv could not parse statement starting at line 1
+ * Serving Flask app 'web_panel'
+ * Debug mode: off
+2025-06-16 18:57:22,877 - werkzeug - INFO - WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.31.128.94:5000
+2025-06-16 18:57:22,877 - werkzeug - INFO - Press CTRL+C to quit
+2025-06-16 18:57:27,649 - root - ERROR - Erro ao iniciar bot: not enough values to unpack (expected 2, got 1)
+^C2025-06-16 18:57:49,036 - __main__ - INFO - 🛑 Sistema sendo encerrado...
+~/workspace$ ^C
+~/workspace$ ^C
+~/workspace$ ^C
+~/workspace$ python main.py
+2025-06-16 18:57:53,804 - __main__ - INFO - 🚀 Iniciando Sistema de Suporte Telegram...
+2025-06-16 18:57:53,805 - __main__ - INFO - ✅ Sistema iniciado com sucesso!
+2025-06-16 18:57:53,805 - __main__ - INFO - 🌐 Painel web: http://0.0.0.0:5000
+2025-06-16 18:57:53,805 - __main__ - INFO - ⏹️ Pressione Ctrl+C para parar
+2025-06-16 18:57:54,174 - dotenv.main - WARNING - python-dotenv could not parse statement starting at line 1
+ * Serving Flask app 'web_panel'
+ * Debug mode: off
+2025-06-16 18:57:54,186 - werkzeug - INFO - WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.31.128.94:5000
+2025-06-16 18:57:54,187 - werkzeug - INFO - Press CTRL+C to quit
+2025-06-16 18:57:58,884 - root - ERROR - Erro ao iniciar bot: not enough values to unpack (expected 2, got 1)
+2025-06-16 18:58:15,966 - web_panel - ERROR - Exception on / [GET]
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/web_panel.py", line 175, in dashboard
+    return render_template('dashboard.html', config=config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/runner/workspace/templates/dashboard.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/home/runner/workspace/templates/base.html", line 81, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/templates/dashboard.html", line 39, in block 'content'
+    <h3 id="total-users">{{ config.statistics.total_users }}</h3>
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'dict object' has no attribute 'statistics'

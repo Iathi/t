@@ -1,5 +1,6 @@
-quart
-telethon
-flask_socketio
-Flask
-eventlet
+
+python-telegram-bot==20.8
+flask>=3.1.1
+flask-cors>=6.0.1
+httpx
+python-dotenv

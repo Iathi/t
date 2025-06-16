@@ -1,0 +1,12 @@
+
+[project]
+name = "telegram-support-bot"
+version = "0.1.0"
+description = "Bot de Suporte Telegram com Painel Web"
+requires-python = ">=3.11"
+dependencies = [
+    "python-telegram-bot==20.8",
+    "flask>=3.1.1",
+    "flask-cors>=6.0.1",
+    "httpx>=0.24.0",
+]

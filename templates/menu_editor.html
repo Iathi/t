@@ -1,0 +1,633 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor de Menu - {{ config.bot_settings.bot_name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+                <i class="fas fa-robot me-2"></i>{{ config.bot_settings.bot_name }}
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('menu_editor') }}">
+                            <i class="fas fa-edit me-2"></i>Editor de Menu
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('faq_management') }}">
+                            <i class="fas fa-question-circle me-2"></i>FAQ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logs_viewer') }}">
+                            <i class="fas fa-file-alt me-2"></i>Logs
+                        </a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-cog me-1"></i>Configurações
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('settings') }}">
+                                <i class="fas fa-sliders-h me-2"></i>Configurações Gerais
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard') }}">
+                                <i class="fas fa-home me-2"></i>Voltar ao Dashboard
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                            <div class="mb-3 mb-md-0">
+                                <h2 class="mb-1"><i class="fas fa-edit text-primary me-2"></i>Editor de Menu</h2>
+                                <p class="text-muted mb-0">Configure os menus interativos do seu bot Telegram</p>
+                            </div>
+                            <div class="d-flex flex-column flex-sm-row gap-2">
+                                <button class="btn btn-success" onclick="saveMenu()">
+                                    <i class="fas fa-save me-1"></i>Salvar Menu
+                                </button>
+                                <button class="btn btn-info" onclick="previewMenu()">
+                                    <i class="fas fa-eye me-1"></i>Visualizar
+                                </button>
+                                <button class="btn btn-warning" onclick="resetMenu()">
+                                    <i class="fas fa-undo me-1"></i>Restaurar Padrão
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Principal -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-home text-primary me-2"></i>
+                    Menu Principal
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="main-menu-title" class="form-label">Título do Menu</label>
+                    <input type="text" class="form-control" id="main-menu-title" 
+                           value="{{ config.menu_config.main_menu.title if config.menu_config and config.menu_config.main_menu else '🔧 Menu de Suporte' }}"
+                           placeholder="🔧 Menu de Suporte">
+                </div>
+                <div class="mb-3">
+                    <label for="main-menu-description" class="form-label">Descrição</label>
+                    <textarea class="form-control" id="main-menu-description" rows="2" 
+                              placeholder="Selecione uma opção:">{{ config.menu_config.main_menu.description if config.menu_config and config.menu_config.main_menu else 'Selecione uma opção:' }}</textarea>
+                </div>
+                
+                <h6>Botões do Menu Principal</h6>
+                <div id="main-menu-buttons">
+                    <!-- Botões serão carregados dinamicamente -->
+                </div>
+                <button class="btn btn-outline-primary btn-sm mt-2" onclick="addButton('main')">
+                    <i class="fas fa-plus me-1"></i>Adicionar Botão
+                </button>
+            </div>
+        </div>
+
+        <!-- Menu FAQ -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-question-circle text-info me-2"></i>
+                    Menu FAQ
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="faq-menu-title" class="form-label">Título do Menu FAQ</label>
+                    <input type="text" class="form-control" id="faq-menu-title" 
+                           value="{{ config.menu_config.faq_menu.title if config.menu_config and config.menu_config.faq_menu else '❓ Perguntas Frequentes' }}"
+                           placeholder="❓ Perguntas Frequentes">
+                </div>
+                <div class="mb-3">
+                    <label for="faq-menu-description" class="form-label">Descrição</label>
+                    <textarea class="form-control" id="faq-menu-description" rows="2" 
+                              placeholder="Selecione uma categoria para ver as perguntas mais comuns:">{{ config.menu_config.faq_menu.description if config.menu_config and config.menu_config.faq_menu else 'Selecione uma categoria para ver as perguntas mais comuns:' }}</textarea>
+                </div>
+                
+                <h6>Botões do Menu FAQ</h6>
+                <div id="faq-menu-buttons">
+                    <!-- Botões serão carregados dinamicamente -->
+                </div>
+                <button class="btn btn-outline-info btn-sm mt-2" onclick="addButton('faq')">
+                    <i class="fas fa-plus me-1"></i>Adicionar Botão
+                </button>
+            </div>
+        </div>
+
+        <!-- Menu Categorias -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-list text-warning me-2"></i>
+                    Menu Categorias
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="categories-menu-title" class="form-label">Título do Menu Categorias</label>
+                    <input type="text" class="form-control" id="categories-menu-title" 
+                           value="{{ config.menu_config.categories_menu.title if config.menu_config and config.menu_config.categories_menu else '📋 Categorias de Suporte' }}"
+                           placeholder="📋 Categorias de Suporte">
+                </div>
+                <div class="mb-3">
+                    <label for="categories-menu-description" class="form-label">Descrição</label>
+                    <textarea class="form-control" id="categories-menu-description" rows="2" 
+                              placeholder="Selecione a categoria que melhor descreve seu problema:">{{ config.menu_config.categories_menu.description if config.menu_config and config.menu_config.categories_menu else 'Selecione a categoria que melhor descreve seu problema:' }}</textarea>
+                </div>
+                
+                <h6>Botões do Menu Categorias</h6>
+                <div id="categories-menu-buttons">
+                    <!-- Botões serão carregados dinamicamente -->
+                </div>
+                <button class="btn btn-outline-warning btn-sm mt-2" onclick="addButton('categories')">
+                    <i class="fas fa-plus me-1"></i>Adicionar Botão
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Editar Botão -->
+    <div class="modal fade" id="editButtonModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Botão</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="button-form">
+                        <div class="mb-3">
+                            <label for="button-text" class="form-label">Texto do Botão</label>
+                            <input type="text" class="form-control" id="button-text" placeholder="❓ FAQ">
+                        </div>
+                        <div class="mb-3">
+                            <label for="button-action" class="form-label">Ação</label>
+                            <select class="form-control" id="button-action">
+                                <option value="faq">Mostrar FAQ</option>
+                                <option value="contact">Mostrar Contato</option>
+                                <option value="report_issue">Reportar Problema</option>
+                                <option value="categories">Mostrar Categorias</option>
+                                <option value="custom">Ação Customizada</option>
+                            </select>
+                        </div>
+                        <div class="mb-3" id="custom-action-group" style="display: none;">
+                            <label for="custom-action" class="form-label">Ação Customizada</label>
+                            <input type="text" class="form-control" id="custom-action" placeholder="custom_action">
+                        </div>
+                        <div class="mb-3">
+                            <label for="button-emoji" class="form-label">Emoji (opcional)</label>
+                            <input type="text" class="form-control" id="button-emoji" placeholder="❓">
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="button-enabled" checked>
+                            <label class="form-check-label" for="button-enabled">
+                                Botão Ativo
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveButton()">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Visualização -->
+    <div class="modal fade" id="previewModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Visualização do Menu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="menu-preview">
+                        <!-- Preview será carregado aqui -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toast" class="toast" role="alert">
+            <div class="toast-header">
+                <i class="fas fa-info-circle text-primary me-2"></i>
+                <strong class="me-auto">Notificação</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toast-body">
+                Mensagem aqui
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        let currentMenuType = '';
+        let currentButtonIndex = -1;
+        let menuConfig = {
+            main_menu: {
+                title: "🔧 Menu de Suporte",
+                description: "Selecione uma opção:",
+                buttons: [
+                    { text: "❓ FAQ", action: "faq", enabled: true },
+                    { text: "📞 Contato", action: "contact", enabled: true },
+                    { text: "🐛 Reportar Problema", action: "report_issue", enabled: true },
+                    { text: "📋 Categorias", action: "categories", enabled: true }
+                ]
+            },
+            faq_menu: {
+                title: "❓ Perguntas Frequentes",
+                description: "Selecione uma categoria para ver as perguntas mais comuns:",
+                buttons: [
+                    { text: "💻 Técnico", action: "faq_tecnico", enabled: true },
+                    { text: "💳 Pagamento", action: "faq_pagamento", enabled: true },
+                    { text: "👤 Conta", action: "faq_conta", enabled: true },
+                    { text: "📱 App", action: "faq_app", enabled: true },
+                    { text: "🔐 Segurança", action: "faq_seguranca", enabled: true },
+                    { text: "📋 Geral", action: "faq_geral", enabled: true }
+                ]
+            },
+            categories_menu: {
+                title: "📋 Categorias de Suporte",
+                description: "Selecione a categoria que melhor descreve seu problema:",
+                buttons: [
+                    { text: "💻 Problemas Técnicos", action: "category_problemas_tecnicos", enabled: true },
+                    { text: "💳 Questões de Pagamento", action: "category_questoes_pagamento", enabled: true },
+                    { text: "👤 Gerenciamento de Conta", action: "category_gerenciamento_conta", enabled: true },
+                    { text: "📱 Problemas do App", action: "category_problemas_app", enabled: true },
+                    { text: "🔐 Segurança", action: "category_seguranca", enabled: true },
+                    { text: "💬 Feedback", action: "category_feedback", enabled: true }
+                ]
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMenuConfig();
+            renderAllMenus();
+            
+            // Event listener para ação customizada
+            document.getElementById('button-action').addEventListener('change', function() {
+                const customGroup = document.getElementById('custom-action-group');
+                if (this.value === 'custom') {
+                    customGroup.style.display = 'block';
+                } else {
+                    customGroup.style.display = 'none';
+                }
+            });
+        });
+
+        async function loadMenuConfig() {
+            try {
+                const response = await fetch('/api/config');
+                const config = await response.json();
+                
+                if (config.menu_config) {
+                    menuConfig = { ...menuConfig, ...config.menu_config };
+                }
+                
+                // Atualizar campos dos títulos
+                document.getElementById('main-menu-title').value = menuConfig.main_menu.title;
+                document.getElementById('main-menu-description').value = menuConfig.main_menu.description;
+                document.getElementById('faq-menu-title').value = menuConfig.faq_menu.title;
+                document.getElementById('faq-menu-description').value = menuConfig.faq_menu.description;
+                document.getElementById('categories-menu-title').value = menuConfig.categories_menu.title;
+                document.getElementById('categories-menu-description').value = menuConfig.categories_menu.description;
+                
+            } catch (error) {
+                console.error('Erro ao carregar configuração do menu:', error);
+                showToast('Erro ao carregar configuração do menu', 'error');
+            }
+        }
+
+        function renderAllMenus() {
+            renderMenuButtons('main', menuConfig.main_menu.buttons);
+            renderMenuButtons('faq', menuConfig.faq_menu.buttons);
+            renderMenuButtons('categories', menuConfig.categories_menu.buttons);
+        }
+
+        function renderMenuButtons(menuType, buttons) {
+            const container = document.getElementById(`${menuType}-menu-buttons`);
+            container.innerHTML = '';
+            
+            buttons.forEach((button, index) => {
+                const buttonDiv = document.createElement('div');
+                buttonDiv.className = 'button-item mb-2 p-3 border rounded';
+                buttonDiv.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>${button.text}</strong>
+                            <br>
+                            <small class="text-muted">Ação: ${button.action}</small>
+                            <span class="badge ${button.enabled ? 'bg-success' : 'bg-secondary'} ms-2">
+                                ${button.enabled ? 'Ativo' : 'Inativo'}
+                            </span>
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editButton('${menuType}', ${index})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="removeButton('${menuType}', ${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(buttonDiv);
+            });
+        }
+
+        function addButton(menuType) {
+            currentMenuType = menuType;
+            currentButtonIndex = -1;
+            
+            // Limpar formulário
+            document.getElementById('button-text').value = '';
+            document.getElementById('button-action').value = 'faq';
+            document.getElementById('custom-action').value = '';
+            document.getElementById('button-emoji').value = '';
+            document.getElementById('button-enabled').checked = true;
+            document.getElementById('custom-action-group').style.display = 'none';
+            
+            document.querySelector('#editButtonModal .modal-title').textContent = 'Adicionar Botão';
+            new bootstrap.Modal(document.getElementById('editButtonModal')).show();
+        }
+
+        function editButton(menuType, index) {
+            currentMenuType = menuType;
+            currentButtonIndex = index;
+            
+            const button = getMenuConfig(menuType).buttons[index];
+            
+            document.getElementById('button-text').value = button.text;
+            document.getElementById('button-action').value = button.action.startsWith('custom_') ? 'custom' : button.action;
+            document.getElementById('custom-action').value = button.action.startsWith('custom_') ? button.action : '';
+            document.getElementById('button-emoji').value = button.emoji || '';
+            document.getElementById('button-enabled').checked = button.enabled;
+            
+            if (button.action.startsWith('custom_') || document.getElementById('button-action').value === 'custom') {
+                document.getElementById('custom-action-group').style.display = 'block';
+            }
+            
+            document.querySelector('#editButtonModal .modal-title').textContent = 'Editar Botão';
+            new bootstrap.Modal(document.getElementById('editButtonModal')).show();
+        }
+
+        function removeButton(menuType, index) {
+            if (confirm('Tem certeza que deseja remover este botão?')) {
+                const menu = getMenuConfig(menuType);
+                menu.buttons.splice(index, 1);
+                renderMenuButtons(menuType, menu.buttons);
+                showToast('Botão removido', 'success');
+            }
+        }
+
+        function saveButton() {
+            const text = document.getElementById('button-text').value;
+            const actionSelect = document.getElementById('button-action').value;
+            const customAction = document.getElementById('custom-action').value;
+            const emoji = document.getElementById('button-emoji').value;
+            const enabled = document.getElementById('button-enabled').checked;
+            
+            if (!text) {
+                showToast('O texto do botão é obrigatório', 'error');
+                return;
+            }
+            
+            const action = actionSelect === 'custom' ? customAction : actionSelect;
+            
+            if (!action) {
+                showToast('A ação do botão é obrigatória', 'error');
+                return;
+            }
+            
+            const buttonData = {
+                text: text,
+                action: action,
+                emoji: emoji,
+                enabled: enabled
+            };
+            
+            const menu = getMenuConfig(currentMenuType);
+            
+            if (currentButtonIndex === -1) {
+                // Adicionar novo botão
+                menu.buttons.push(buttonData);
+            } else {
+                // Editar botão existente
+                menu.buttons[currentButtonIndex] = buttonData;
+            }
+            
+            renderMenuButtons(currentMenuType, menu.buttons);
+            bootstrap.Modal.getInstance(document.getElementById('editButtonModal')).hide();
+            showToast('Botão salvo', 'success');
+        }
+
+        function getMenuConfig(menuType) {
+            switch(menuType) {
+                case 'main': return menuConfig.main_menu;
+                case 'faq': return menuConfig.faq_menu;
+                case 'categories': return menuConfig.categories_menu;
+                default: return menuConfig.main_menu;
+            }
+        }
+
+        async function saveMenu() {
+            try {
+                // Atualizar títulos e descrições
+                menuConfig.main_menu.title = document.getElementById('main-menu-title').value;
+                menuConfig.main_menu.description = document.getElementById('main-menu-description').value;
+                menuConfig.faq_menu.title = document.getElementById('faq-menu-title').value;
+                menuConfig.faq_menu.description = document.getElementById('faq-menu-description').value;
+                menuConfig.categories_menu.title = document.getElementById('categories-menu-title').value;
+                menuConfig.categories_menu.description = document.getElementById('categories-menu-description').value;
+                
+                const response = await fetch('/api/save_menu', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ menu_config: menuConfig })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Menu salvo com sucesso!', 'success');
+                } else {
+                    showToast('Erro ao salvar menu: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showToast('Erro ao salvar menu: ' + error.message, 'error');
+            }
+        }
+
+        function previewMenu() {
+            const preview = document.getElementById('menu-preview');
+            
+            let html = '<div class="row">';
+            
+            // Preview Menu Principal
+            html += `
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">${menuConfig.main_menu.title}</h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="small">${menuConfig.main_menu.description}</p>
+                            <div class="d-grid gap-1">
+            `;
+            
+            menuConfig.main_menu.buttons.forEach(button => {
+                if (button.enabled) {
+                    html += `<button class="btn btn-outline-primary btn-sm">${button.text}</button>`;
+                }
+            });
+            
+            html += '</div></div></div></div>';
+            
+            // Preview Menu FAQ
+            html += `
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">${menuConfig.faq_menu.title}</h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="small">${menuConfig.faq_menu.description}</p>
+                            <div class="d-grid gap-1">
+            `;
+            
+            menuConfig.faq_menu.buttons.forEach(button => {
+                if (button.enabled) {
+                    html += `<button class="btn btn-outline-info btn-sm">${button.text}</button>`;
+                }
+            });
+            
+            html += '</div></div></div></div>';
+            
+            // Preview Menu Categorias
+            html += `
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">${menuConfig.categories_menu.title}</h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="small">${menuConfig.categories_menu.description}</p>
+                            <div class="d-grid gap-1">
+            `;
+            
+            menuConfig.categories_menu.buttons.forEach(button => {
+                if (button.enabled) {
+                    html += `<button class="btn btn-outline-warning btn-sm">${button.text}</button>`;
+                }
+            });
+            
+            html += '</div></div></div></div>';
+            html += '</div>';
+            
+            preview.innerHTML = html;
+            new bootstrap.Modal(document.getElementById('previewModal')).show();
+        }
+
+        function resetMenu() {
+            if (confirm('Tem certeza que deseja restaurar o menu padrão? Todas as modificações serão perdidas.')) {
+                menuConfig = {
+                    main_menu: {
+                        title: "🔧 Menu de Suporte",
+                        description: "Selecione uma opção:",
+                        buttons: [
+                            { text: "❓ FAQ", action: "faq", enabled: true },
+                            { text: "📞 Contato", action: "contact", enabled: true },
+                            { text: "🐛 Reportar Problema", action: "report_issue", enabled: true },
+                            { text: "📋 Categorias", action: "categories", enabled: true }
+                        ]
+                    },
+                    faq_menu: {
+                        title: "❓ Perguntas Frequentes",
+                        description: "Selecione uma categoria para ver as perguntas mais comuns:",
+                        buttons: [
+                            { text: "💻 Técnico", action: "faq_tecnico", enabled: true },
+                            { text: "💳 Pagamento", action: "faq_pagamento", enabled: true },
+                            { text: "👤 Conta", action: "faq_conta", enabled: true },
+                            { text: "📱 App", action: "faq_app", enabled: true },
+                            { text: "🔐 Segurança", action: "faq_seguranca", enabled: true },
+                            { text: "📋 Geral", action: "faq_geral", enabled: true }
+                        ]
+                    },
+                    categories_menu: {
+                        title: "📋 Categorias de Suporte",
+                        description: "Selecione a categoria que melhor descreve seu problema:",
+                        buttons: [
+                            { text: "💻 Problemas Técnicos", action: "category_problemas_tecnicos", enabled: true },
+                            { text: "💳 Questões de Pagamento", action: "category_questoes_pagamento", enabled: true },
+                            { text: "👤 Gerenciamento de Conta", action: "category_gerenciamento_conta", enabled: true },
+                            { text: "📱 Problemas do App", action: "category_problemas_app", enabled: true },
+                            { text: "🔐 Segurança", action: "category_seguranca", enabled: true },
+                            { text: "💬 Feedback", action: "category_feedback", enabled: true }
+                        ]
+                    }
+                };
+                
+                // Atualizar campos
+                document.getElementById('main-menu-title').value = menuConfig.main_menu.title;
+                document.getElementById('main-menu-description').value = menuConfig.main_menu.description;
+                document.getElementById('faq-menu-title').value = menuConfig.faq_menu.title;
+                document.getElementById('faq-menu-description').value = menuConfig.faq_menu.description;
+                document.getElementById('categories-menu-title').value = menuConfig.categories_menu.title;
+                document.getElementById('categories-menu-description').value = menuConfig.categories_menu.description;
+                
+                renderAllMenus();
+                showToast('Menu restaurado para o padrão', 'success');
+            }
+        }
+    </script>
+</body>
+</html>

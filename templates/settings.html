@@ -1,0 +1,502 @@
+{% extends "base.html" %}
+
+{% block title %}Configurações - Painel Bot Telegram{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="h3 mb-4">
+            <i class="fas fa-cog text-primary me-2"></i>
+            Configurações do Bot
+        </h1>
+    </div>
+</div>
+
+<form id="settings-form">
+    <!-- Bot Authentication -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-key text-warning me-2"></i>
+                Autenticação do Bot
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Token do Bot:</strong> Obtenha seu token no @BotFather do Telegram. Mantenha-o seguro e nunca o compartilhe.
+            </div>
+
+            <div class="mb-4">
+                <label for="bot-token" class="form-label">Token do Bot Telegram</label>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="bot-token" placeholder="000000000:AAA-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">
+                    <button class="btn btn-outline-secondary" type="button" id="toggle-token-visibility">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="form-text">
+                    Deixe em branco para manter o token atual. O token será criptografado ao salvar.
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap">
+                <button type="button" class="btn btn-primary" onclick="testBotConnection()">
+                    <i class="fas fa-wifi me-1"></i>Testar Conexão
+                </button>
+                <button type="button" class="btn btn-outline-secondary" onclick="getBotInfo()">
+                    <i class="fas fa-info me-1"></i>Info do Bot
+                </button>
+                <button type="button" class="btn btn-success" onclick="saveTokenAndRestart()">
+                    <i class="fas fa-save me-1"></i>Salvar Token & Reiniciar
+                </button>
+            </div>
+
+            <div id="bot-test-result" class="mt-3" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- Bot Settings -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-cog text-secondary me-2"></i>
+                Configurações Gerais
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="bot-name" class="form-label">Nome do Bot</label>
+                        <input type="text" class="form-control" id="bot-name" value="{{ config.bot_settings.bot_name }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="log-level" class="form-label">Nível de Log</label>
+                        <select class="form-select" id="log-level">
+                            <option value="DEBUG" {% if config.bot_settings.log_level == 'DEBUG' %}selected{% endif %}>DEBUG</option>
+                            <option value="INFO" {% if config.bot_settings.log_level == 'INFO' %}selected{% endif %}>INFO</option>
+                            <option value="WARNING" {% if config.bot_settings.log_level == 'WARNING' %}selected{% endif %}>WARNING</option>
+                            <option value="ERROR" {% if config.bot_settings.log_level == 'ERROR' %}selected{% endif %}>ERROR</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="welcome-message" class="form-label">Mensagem de Boas-vindas</label>
+                <textarea class="form-control" id="welcome-message" rows="4">{{ config.bot_settings.welcome_message }}</textarea>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="support-contact" class="form-label">Contato de Suporte</label>
+                        <input type="text" class="form-control" id="support-contact" value="{{ config.bot_settings.support_contact }}" placeholder="@admin">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="support-email" class="form-label">Email de Suporte</label>
+                        <input type="email" class="form-control" id="support-email" value="{{ config.bot_settings.support_email }}" placeholder="support@company.com">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="auto-reply" {% if config.bot_settings.auto_reply %}checked{% endif %}>
+                <label class="form-check-label" for="auto-reply">
+                    Ativar resposta automática para mensagens
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Settings -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-bars text-info me-2"></i>
+                Configurações do Menu
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="show-faq" {% if config.menu_settings.show_faq %}checked{% endif %}>
+                        <label class="form-check-label" for="show-faq">
+                            <i class="fas fa-question-circle me-1"></i>Mostrar Menu FAQ
+                        </label>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="show-contact" {% if config.menu_settings.show_contact %}checked{% endif %}>
+                        <label class="form-check-label" for="show-contact">
+                            <i class="fas fa-phone me-1"></i>Mostrar Menu Contato
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="show-report-issue" {% if config.menu_settings.show_report_issue %}checked{% endif %}>
+                        <label class="form-check-label" for="show-report-issue">
+                            <i class="fas fa-bug me-1"></i>Mostrar Reportar Problema
+                        </label>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="show-categories" {% if config.menu_settings.show_categories %}checked{% endif %}>
+                        <label class="form-check-label" for="show-categories">
+                            <i class="fas fa-list me-1"></i>Mostrar Menu Categorias
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Settings -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-search text-warning me-2"></i>
+                Configurações da FAQ
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="max-results" class="form-label">Máximo de Resultados</label>
+                        <input type="number" class="form-control" id="max-results" value="{{ config.faq_settings.max_results }}" min="1" max="10">
+                        <div class="form-text">Número máximo de resultados da FAQ a serem mostrados</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="search-threshold" class="form-label">Limite de Busca</label>
+                        <input type="number" class="form-control" id="search-threshold" value="{{ config.faq_settings.search_threshold }}" min="0" max="10">
+                        <div class="form-text">Pontuação mínima para considerar um resultado relevante</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="categories-enabled" {% if config.faq_settings.categories_enabled %}checked{% endif %}>
+                <label class="form-check-label" for="categories-enabled">
+                    Ativar busca por categorias na FAQ
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-save me-2"></i>
+                        Salvar Configurações
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-lg ms-2" onclick="resetForm()">
+                        <i class="fas fa-undo me-2"></i>
+                        Restaurar
+                    </button>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-warning btn-lg" onclick="restartBot()">
+                        <i class="fas fa-sync-alt me-2"></i>
+                        Aplicar e Reiniciar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Toggle token visibility
+document.getElementById('toggle-token-visibility').addEventListener('click', function() {
+    const tokenInput = document.getElementById('bot-token');
+    const icon = this.querySelector('i');
+
+    if (tokenInput.type === 'password') {
+        tokenInput.type = 'text';
+        icon.className = 'fas fa-eye-slash';
+    } else {
+        tokenInput.type = 'password';
+        icon.className = 'fas fa-eye';
+    }
+});
+
+// Test bot connection
+async function testBotConnection() {
+    const token = document.getElementById('bot-token').value;
+    const resultDiv = document.getElementById('bot-test-result');
+
+    if (!token) {
+        showToast('Por favor, insira o token do bot', 'warning');
+        return;
+    }
+
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = '<div class="alert alert-info"><i class="fas fa-spinner fa-spin me-2"></i>Testando conexão...</div>';
+
+    try {
+        const response = await fetch('/api/test_bot_token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: token })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            resultDiv.innerHTML = `
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>Conexão bem-sucedida!</strong><br>
+                    Bot: ${data.bot_info.first_name} (@${data.bot_info.username})
+                </div>
+            `;
+        } else {
+            resultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-times-circle me-2"></i>
+                    <strong>Falha na conexão:</strong> ${data.message}
+                </div>
+            `;
+        }
+    } catch (error) {
+        resultDiv.innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-times-circle me-2"></i>
+                <strong>Erro:</strong> ${error.message}
+            </div>
+        `;
+    }
+}
+
+// Get bot info
+async function getBotInfo() {
+    const token = document.getElementById('bot-token').value;
+
+    if (!token) {
+        showToast('Por favor, insira o token do bot', 'warning');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/test_bot_token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: token })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            const info = data.bot_info;
+            const modal = new bootstrap.Modal(document.getElementById('botInfoModal') || createBotInfoModal());
+
+            document.getElementById('bot-info-content').innerHTML = `
+                <div class="row">
+                    <div class="col-sm-4"><strong>Nome:</strong></div>
+                    <div class="col-sm-8">${info.first_name}</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4"><strong>Username:</strong></div>
+                    <div class="col-sm-8">@${info.username}</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4"><strong>ID:</strong></div>
+                    <div class="col-sm-8">${info.id}</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4"><strong>Pode receber mensagens:</strong></div>
+                    <div class="col-sm-8">${info.can_receive_messages ? 'Sim' : 'Não'}</div>
+                </div>
+            `;
+
+            modal.show();
+        } else {
+            showToast('Erro ao obter informações do bot: ' + data.message, 'error');
+        }
+    } catch (error) {
+        showToast('Erro ao conectar: ' + error.message, 'error');
+    }
+}
+
+function createBotInfoModal() {
+    const modalHtml = `
+        <div class="modal fade" id="botInfoModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Informações do Bot</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" id="bot-info-content"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    return document.getElementById('botInfoModal');
+}
+
+document.getElementById('settings-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const botToken = document.getElementById('bot-token').value;
+
+    const config = {
+        bot_settings: {
+            bot_name: document.getElementById('bot-name').value,
+            welcome_message: document.getElementById('welcome-message').value,
+            support_contact: document.getElementById('support-contact').value,
+            support_email: document.getElementById('support-email').value,
+            auto_reply: document.getElementById('auto-reply').checked,
+            log_level: document.getElementById('log-level').value,
+            bot_token: botToken || undefined
+        },
+        menu_settings: {
+            show_faq: document.getElementById('show-faq').checked,
+            show_contact: document.getElementById('show-contact').checked,
+            show_report_issue: document.getElementById('show-report-issue').checked,
+            show_categories: document.getElementById('show-categories').checked
+        },
+        faq_settings: {
+            max_results: parseInt(document.getElementById('max-results').value),
+            search_threshold: parseInt(document.getElementById('search-threshold').value),
+            categories_enabled: document.getElementById('categories-enabled').checked
+        },
+        statistics: {{ config.statistics | tojson }}
+    };
+
+    fetch('/api/config', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(config)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast('Configurações salvas com sucesso!', 'success');
+            if (botToken) {
+                document.getElementById('bot-token').value = '';
+                showToast('Token atualizado. Reiniciando bot...', 'info');
+
+// Função para salvar token e reiniciar bot
+async function saveTokenAndRestart() {
+    const token = document.getElementById('bot-token').value;
+
+    if (!token) {
+        showToast('Por favor, insira um token válido', 'error');
+        return;
+    }
+
+    try {
+        // Primeiro, testar o token
+        const testResponse = await fetch('/api/test_bot_token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: token })
+        });
+
+        const testData = await testResponse.json();
+
+        if (!testData.success) {
+            showToast('Token inválido: ' + testData.message, 'error');
+            return;
+        }
+
+        showToast('Token válido! Salvando configurações...', 'success');
+
+        // Salvar configurações
+        const config = {
+            bot_settings: {
+                bot_name: document.getElementById('bot-name').value,
+                welcome_message: document.getElementById('welcome-message').value,
+                support_contact: document.getElementById('support-contact').value,
+                support_email: document.getElementById('support-email').value,
+                auto_reply: document.getElementById('auto-reply').checked,
+                log_level: document.getElementById('log-level').value,
+                bot_token: token
+            },
+            menu_settings: {
+                show_faq: document.getElementById('show-faq').checked,
+                show_contact: document.getElementById('show-contact').checked,
+                show_report_issue: document.getElementById('show-report-issue').checked,
+                show_categories: document.getElementById('show-categories').checked
+            },
+            faq_settings: {
+                max_results: parseInt(document.getElementById('max-results').value),
+                search_threshold: parseInt(document.getElementById('search-threshold').value),
+                categories_enabled: document.getElementById('categories-enabled').checked
+            }
+        };
+
+        // Salvar configurações
+        const saveResponse = await fetch('/api/config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(config)
+        });
+
+        const saveData = await saveResponse.json();
+
+        if (saveData.success) {
+            showToast('Token salvo com sucesso!', 'success');
+            document.getElementById('bot-token').value = '';
+
+            // Aguardar um pouco e reiniciar o bot
+            showToast('Reiniciando bot com novo token...', 'info');
+            setTimeout(async () => {
+                const restartResponse = await fetch('/api/restart_bot', { method: 'POST' });
+                const restartData = await restartResponse.json();
+
+                if (restartData.success) {
+                    showToast('Bot reiniciado com novo token!', 'success');
+                } else {
+                    showToast('Erro ao reiniciar: ' + restartData.message, 'error');
+                }
+            }, 2000);
+        } else {
+            showToast('Erro ao salvar token: ' + saveData.message, 'error');
+        }
+
+    } catch (error) {
+        showToast('Erro: ' + error.message, 'error');
+    }
+}
+
+                setTimeout(() => restartBot(), 2000);
+            }
+        } else {
+            showToast('Erro ao salvar configurações: ' + data.message, 'error');
+        }
+    })
+    .catch(error => {
+        showToast('Erro ao salvar configurações: ' + error.message, 'error');
+    });
+});
+
+function resetForm() {
+    if (confirm('Tem certeza que deseja restaurar as configurações?')) {
+        location.reload();
+    }
+}
+</script>
+{% endblock %}
