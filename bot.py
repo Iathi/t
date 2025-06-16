@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 """
 Telegram Support Bot - Main Entry Point
@@ -16,8 +17,6 @@ from handlers.callbacks import handle_callback
 from handlers.messages import handle_message
 from utils.logger import setup_logger
 
-
-
 def main():
     """Função principal para inicializar e executar o bot"""
     
@@ -31,6 +30,9 @@ def main():
         return
     
     logger.info("🤖 Iniciando Bot de Suporte...")
+    
+    # Inicializar variável application
+    application = None
     
     try:
         # Criar aplicação do bot
@@ -49,21 +51,24 @@ def main():
         
         logger.info("✅ Bot de Suporte iniciado com sucesso!")
         
-        # Executar o bot com configurações específicas
+        # Executar o bot com configurações simplificadas
         application.run_polling(
             allowed_updates=["message", "callback_query"],
-            drop_pending_updates=True,
-            close_loop=False
+            drop_pending_updates=True
         )
         
     except Exception as e:
         logger.error(f"❌ Erro ao iniciar bot: {e}")
+        
         # Tentar uma abordagem alternativa se a primeira falhar
-        try:
-            logger.info("🔄 Tentando inicialização alternativa...")
-            application.run_polling(drop_pending_updates=True)
-        except Exception as e2:
-            logger.error(f"❌ Erro na inicialização alternativa: {e2}")
+        if application is not None:
+            try:
+                logger.info("🔄 Tentando inicialização alternativa...")
+                application.run_polling(drop_pending_updates=True)
+            except Exception as e2:
+                logger.error(f"❌ Erro na inicialização alternativa: {e2}")
+        else:
+            logger.error("❌ Não foi possível criar a aplicação do bot")
             raise e
 
 if __name__ == "__main__":

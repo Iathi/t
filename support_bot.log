@@ -1180,3 +1180,84 @@ jinja2.exceptions.UndefinedError: 'dict object' has no attribute 'menu_settings'
 2025-06-16 19:52:03,701 - werkzeug - INFO - 172.31.128.94 - - [16/Jun/2025 19:52:03] "GET /api/bot_status HTTP/1.1" 200 -
 2025-06-16 19:52:03,706 - werkzeug - INFO - 172.31.128.94 - - [16/Jun/2025 19:52:03] "GET /api/statistics HTTP/1.1" 200 -
 2025-06-16 19:52:03,765 - werkzeug - INFO - 172.31.128.94 - - [16/Jun/2025 19:52:03] "GET /api/config HTTP/1.1" 200 -
+2025-06-16 20:58:39,927 - __main__ - INFO - 🚀 Iniciando Sistema de Suporte Telegram...
+2025-06-16 20:58:39,929 - __main__ - INFO - ✅ Sistema iniciado com sucesso!
+2025-06-16 20:58:39,929 - __main__ - INFO - 🌐 Painel web: http://0.0.0.0:5000
+2025-06-16 20:58:39,930 - __main__ - INFO - ⏹️ Pressione Ctrl+C para parar
+2025-06-16 20:58:40,297 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.31.128.28:5000
+2025-06-16 20:58:40,298 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-06-16 20:58:42,363 - werkzeug - INFO - 172.31.128.28 - - [16/Jun/2025 20:58:42] "GET / HTTP/1.1" 200 -
+2025-06-16 20:58:42,826 - werkzeug - INFO - 172.31.128.28 - - [16/Jun/2025 20:58:42] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-06-16 20:58:43,396 - werkzeug - INFO - 172.31.128.28 - - [16/Jun/2025 20:58:43] "GET /static/js/main.js HTTP/1.1" 200 -
+2025-06-16 20:58:45,075 - bot - INFO - 🤖 Iniciando Bot de Suporte...
+2025-06-16 20:58:45,103 - bot - INFO - ✅ Bot de Suporte iniciado com sucesso!
+2025-06-16 20:58:45,103 - bot - ERROR - ❌ Erro ao iniciar bot: There is no current event loop in thread 'Thread-2 (start_bot)'.
+2025-06-16 20:58:45,103 - root - ERROR - Erro ao iniciar bot: There is no current event loop in thread 'Thread-2 (start_bot)'.
+2025-06-16 20:58:47,952 - werkzeug - INFO - 172.31.128.28 - - [16/Jun/2025 20:58:47] "GET /api/statistics HTTP/1.1" 200 -
+2025-06-16 20:58:47,978 - werkzeug - INFO - 172.31.128.28 - - [16/Jun/2025 20:58:47] "GET /api/bot_status HTTP/1.1" 200 -
+2025-06-16 20:58:48,220 - werkzeug - INFO - 172.31.128.28 - - [16/Jun/2025 20:58:48] "GET /api/statistics HTTP/1.1" 200 -
+2025-06-16 20:58:48,223 - werkzeug - INFO - 172.31.128.28 - - [16/Jun/2025 20:58:48] "GET /api/bot_status HTTP/1.1" 200 -
+2025-06-16 20:58:59,894 - werkzeug - INFO - 172.31.128.28 - - [16/Jun/2025 20:58:59] "GET /menu-editor HTTP/1.1" 200 -
+2025-06-16 20:59:00,226 - werkzeug - INFO - 172.31.128.28 - - [16/Jun/2025 20:59:00] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-06-16 20:59:00,320 - werkzeug - INFO - 172.31.128.28 - - [16/Jun/2025 20:59:00] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-06-16 20:59:02,603 - werkzeug - INFO - 172.31.128.28 - - [16/Jun/2025 20:59:02] "GET /api/statistics HTTP/1.1" 200 -
+2025-06-16 20:59:02,604 - werkzeug - INFO - 172.31.128.28 - - [16/Jun/2025 20:59:02] "GET /api/bot_status HTTP/1.1" 200 -
+2025-06-16 20:59:02,682 - werkzeug - INFO - 172.31.128.28 - - [16/Jun/2025 20:59:02] "GET /api/config HTTP/1.1" 200 -
+2025-06-16 20:59:32,585 - werkzeug - INFO - 172.31.128.28 - - [16/Jun/2025 20:59:32] "GET /api/bot_status HTTP/1.1" 200 -
+2025-06-16 21:00:03,203 - werkzeug - INFO - 172.31.128.28 - - [16/Jun/2025 21:00:03] "GET /api/bot_status HTTP/1.1" 200 -
+2025-06-16 21:00:03,205 - werkzeug - INFO - 172.31.128.28 - - [16/Jun/2025 21:00:03] "GET /api/statistics HTTP/1.1" 200 -
+2025-06-16 21:00:33,199 - werkzeug - INFO - 172.31.128.28 - - [16/Jun/2025 21:00:33] "GET /api/bot_status HTTP/1.1" 200 -
+2025-06-16 21:01:03,210 - werkzeug - INFO - 172.31.128.28 - - [16/Jun/2025 21:01:03] "GET /api/bot_status HTTP/1.1" 200 -
+2025-06-16 21:01:03,216 - werkzeug - INFO - 172.31.128.28 - - [16/Jun/2025 21:01:03] "GET /api/statistics HTTP/1.1" 200 -
+2025-06-16 21:01:33,211 - werkzeug - INFO - 172.31.128.28 - - [16/Jun/2025 21:01:33] "GET /api/bot_status HTTP/1.1" 200 -
+2025-06-16 21:02:03,199 - werkzeug - INFO - 172.31.128.28 - - [16/Jun/2025 21:02:03] "GET /api/bot_status HTTP/1.1" 200 -
+2025-06-16 21:02:03,203 - werkzeug - INFO - 172.31.128.28 - - [16/Jun/2025 21:02:03] "GET /api/statistics HTTP/1.1" 200 -
+2025-06-16 21:04:35,178 - __main__ - INFO - 🛑 Sistema sendo encerrado...
+2025-06-16 21:09:31,981 - __main__ - INFO - 🚀 Iniciando Sistema de Suporte Telegram...
+2025-06-16 21:09:31,988 - __main__ - INFO - ✅ Sistema iniciado com sucesso!
+2025-06-16 21:09:31,989 - __main__ - INFO - 🌐 Painel web: http://0.0.0.0:5000
+2025-06-16 21:09:31,992 - __main__ - INFO - ⏹️ Pressione Ctrl+C para parar
+2025-06-16 21:09:32,740 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.31.128.58:5000
+2025-06-16 21:09:32,740 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-06-16 21:09:35,293 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:09:35] "GET / HTTP/1.1" 200 -
+2025-06-16 21:09:35,687 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:09:35] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-06-16 21:09:36,263 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:09:36] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-06-16 21:09:36,997 - root - ERROR - Erro ao iniciar bot: cannot import name 'Chat' from 'telegram' (/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/telegram/__init__.py)
+2025-06-16 21:09:38,950 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:09:38] "GET /api/bot_status HTTP/1.1" 200 -
+2025-06-16 21:09:38,976 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:09:38] "GET /api/statistics HTTP/1.1" 200 -
+2025-06-16 21:09:39,153 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:09:39] "GET /api/bot_status HTTP/1.1" 200 -
+2025-06-16 21:09:39,173 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:09:39] "GET /api/statistics HTTP/1.1" 200 -
+2025-06-16 21:09:46,997 - root - INFO - 🔄 Tentando reiniciar o bot...
+2025-06-16 21:09:46,997 - root - ERROR - Falha ao reiniciar bot: cannot access local variable 'bot_main' where it is not associated with a value
+2025-06-16 21:10:08,903 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:10:08] "GET /api/statistics HTTP/1.1" 200 -
+2025-06-16 21:10:08,970 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:10:08] "GET /api/bot_status HTTP/1.1" 200 -
+2025-06-16 21:10:09,177 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:10:09] "GET /api/bot_status HTTP/1.1" 200 -
+2025-06-16 21:10:38,906 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:10:38] "GET /api/statistics HTTP/1.1" 200 -
+2025-06-16 21:10:38,953 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:10:38] "GET /api/bot_status HTTP/1.1" 200 -
+2025-06-16 21:10:39,117 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:10:39] "GET /api/statistics HTTP/1.1" 200 -
+2025-06-16 21:10:39,191 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:10:39] "GET /api/bot_status HTTP/1.1" 200 -
+2025-06-16 21:11:08,900 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:11:08] "GET /api/statistics HTTP/1.1" 200 -
+2025-06-16 21:11:09,045 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:11:09] "GET /api/bot_status HTTP/1.1" 200 -
+2025-06-16 21:11:09,265 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:11:09] "GET /api/bot_status HTTP/1.1" 200 -
+2025-06-16 21:15:01,734 - __main__ - INFO - 🚀 Iniciando Sistema de Suporte Telegram...
+2025-06-16 21:15:01,736 - __main__ - INFO - ✅ Sistema iniciado com sucesso!
+2025-06-16 21:15:01,736 - __main__ - INFO - 🌐 Painel web: http://0.0.0.0:5000
+2025-06-16 21:15:01,736 - __main__ - INFO - ⏹️ Pressione Ctrl+C para parar
+2025-06-16 21:15:02,405 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.31.128.58:5000
+2025-06-16 21:15:02,405 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-06-16 21:15:05,055 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:15:05] "GET / HTTP/1.1" 200 -
+2025-06-16 21:15:05,809 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:15:05] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-06-16 21:15:06,051 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:15:06] "GET /static/js/main.js HTTP/1.1" 200 -
+2025-06-16 21:15:06,749 - root - ERROR - Erro ao iniciar bot: cannot import name 'Chat' from 'telegram' (/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/telegram/__init__.py)
+2025-06-16 21:15:09,413 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:15:09] "GET /api/bot_status HTTP/1.1" 200 -
+2025-06-16 21:15:09,631 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:15:09] "GET /api/bot_status HTTP/1.1" 200 -
+2025-06-16 21:15:09,644 - werkzeug - INFO - 172.31.128.58 - - [16/Jun/2025 21:15:09] "GET /api/statistics HTTP/1.1" 200 -

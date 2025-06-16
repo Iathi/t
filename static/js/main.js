@@ -166,6 +166,43 @@ function setupFormValidation() {
     });
 }
 
+// Função para testar token do bot
+async function testBotToken() {
+    const token = document.getElementById('bot-token').value;
+    if (!token) {
+        showToast('Por favor, insira um token', 'warning');
+        return;
+    }
+
+    const testButton = document.querySelector('button[onclick="testBotToken()"]');
+    const originalText = testButton.innerHTML;
+    testButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testando...';
+    testButton.disabled = true;
+
+    try {
+        const response = await fetch('/api/test_bot_token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ token: token })
+        });
+
+        const result = await response.json();
+        
+        if (result.success) {
+            showToast('Token válido! Bot: ' + result.bot_info.first_name, 'success');
+        } else {
+            showToast('Token inválido: ' + result.message, 'error');
+        }
+    } catch (error) {
+        showToast('Erro ao testar token: ' + error.message, 'error');
+    } finally {
+        testButton.innerHTML = originalText;
+        testButton.disabled = false;
+    }
+}
+
 // Função para formatar números
 function formatNumber(num) {
     return new Intl.NumberFormat('pt-BR').format(num);

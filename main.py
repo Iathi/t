@@ -61,7 +61,8 @@ def start_bot():
         time.sleep(10)
         try:
             logging.info("🔄 Tentando reiniciar o bot...")
-            bot_main()
+            from bot import main as bot_main_retry
+            bot_main_retry()
         except Exception as e2:
             logging.error(f"Falha ao reiniciar bot: {e2}")
 
