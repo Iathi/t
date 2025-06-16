@@ -49,12 +49,22 @@ def main():
         
         logger.info("✅ Bot de Suporte iniciado com sucesso!")
         
-        # Executar o bot
-        application.run_polling(allowed_updates=["message", "callback_query"])
+        # Executar o bot com configurações específicas
+        application.run_polling(
+            allowed_updates=["message", "callback_query"],
+            drop_pending_updates=True,
+            close_loop=False
+        )
         
     except Exception as e:
         logger.error(f"❌ Erro ao iniciar bot: {e}")
-        raise e
+        # Tentar uma abordagem alternativa se a primeira falhar
+        try:
+            logger.info("🔄 Tentando inicialização alternativa...")
+            application.run_polling(drop_pending_updates=True)
+        except Exception as e2:
+            logger.error(f"❌ Erro na inicialização alternativa: {e2}")
+            raise e
 
 if __name__ == "__main__":
     main()

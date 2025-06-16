@@ -57,6 +57,13 @@ def start_bot():
         bot_main()
     except Exception as e:
         logging.error(f"Erro ao iniciar bot: {e}")
+        # Tentar reiniciar o bot após alguns segundos
+        time.sleep(10)
+        try:
+            logging.info("🔄 Tentando reiniciar o bot...")
+            bot_main()
+        except Exception as e2:
+            logging.error(f"Falha ao reiniciar bot: {e2}")
 
 def main():
     """Função principal"""
