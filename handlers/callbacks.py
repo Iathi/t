@@ -100,7 +100,7 @@ Considere entrar em contato com este usuário para oferecer suporte personalizad
     try:
         # Enviar para @Webprontos
         await query.bot.send_message(
-            chat_id="@Webprontos",
+            chat_id="@WebPronto",
             text=alert_text,
             parse_mode=ParseMode.MARKDOWN
         )
