@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 """
 Telegram Support Bot - Using telegram==0.0.1
@@ -10,6 +9,7 @@ import time
 import json
 import requests
 import threading
+from datetime import datetime
 from config import BOT_TOKEN
 
 # Tentar importar setup_logger, caso contrário usar logging básico
@@ -40,7 +40,7 @@ class TelegramBot:
                 'timeout': 10
             }
             response = requests.get(url, params=params, timeout=15)
-            
+
             if response.status_code == 200:
                 data = response.json()
                 if data['ok']:
@@ -59,26 +59,26 @@ class TelegramBot:
                 'text': text,
                 'parse_mode': 'Markdown'
             }
-            
+
             if reply_markup:
                 payload['reply_markup'] = json.dumps(reply_markup)
-            
+
             response = requests.post(url, json=payload)
             result = response.json()
-            
+
             if result.get('ok'):
                 logger.info(f"Mensagem enviada com sucesso para {chat_id}")
                 return result
             else:
                 logger.error(f"Erro ao enviar mensagem: {result}")
                 return None
-                
+
         except Exception as e:
             logger.error(f"Erro ao enviar mensagem: {e}")
             return None
 
     def edit_message_text(self, chat_id, message_id, text, reply_markup=None):
-        """Editar mensagem"""
+        """Editar texto de uma mensagem"""
         try:
             url = f"{self.api_url}/editMessageText"
             payload = {
@@ -87,12 +87,20 @@ class TelegramBot:
                 'text': text,
                 'parse_mode': 'Markdown'
             }
-            
+
             if reply_markup:
                 payload['reply_markup'] = json.dumps(reply_markup)
-            
+
             response = requests.post(url, json=payload)
-            return response.json()
+            result = response.json()
+
+            if result.get('ok'):
+                logger.info(f"Mensagem editada com sucesso")
+                return result
+            else:
+                logger.error(f"Erro ao editar mensagem: {result}")
+                return None
+
         except Exception as e:
             logger.error(f"Erro ao editar mensagem: {e}")
             return None
@@ -167,9 +175,9 @@ class TelegramBot:
         chat_id = message['chat']['id']
         text = message.get('text', '')
         user_name = message.get('from', {}).get('first_name', 'Usuário')
-        
+
         logger.info(f"Mensagem recebida de {chat_id} ({user_name}): {text}")
-        
+
         if text.startswith('/start'):
             welcome_text = f"""🤖 *Bem-vindo ao Sistema de Suporte, {user_name}!*
 
@@ -177,17 +185,17 @@ Olá! Eu sou seu assistente de suporte automatizado.
 Como posso ajudá-lo hoje?
 
 Use os botões abaixo para navegar pelos nossos serviços de suporte."""
-            
+
             result = self.send_message(chat_id, welcome_text, self.get_main_menu())
             if result:
                 logger.info(f"Menu principal enviado para {chat_id}")
-            
+
         elif text.startswith('/menu'):
             menu_text = "🔧 *Menu de Suporte*\n\nSelecione uma opção:"
             result = self.send_message(chat_id, menu_text, self.get_main_menu())
             if result:
                 logger.info(f"Menu de suporte enviado para {chat_id}")
-            
+
         elif text.startswith('/help'):
             help_text = """📚 *Ajuda - Como usar o bot*
 
@@ -200,19 +208,43 @@ Use os botões abaixo para navegar pelos nossos serviços de suporte."""
 • Use os botões inline para navegar pelos menus
 • Digite suas mensagens para buscar na FAQ
 • Selecione a categoria apropriada para seu problema"""
-            
+
             self.send_message(chat_id, help_text)
-            
+
         else:
             # FAQ automática ou resposta padrão
             response = f"🔍 *Obrigado pela sua mensagem, {user_name}!*\n\n"
             response += "Recebi sua solicitação e nossa equipe analisará em breve.\n\n"
             response += "💡 *Precisa de ajuda imediata?*\n"
             response += "Use os botões abaixo para acessar nossas opções de suporte."
-            
+
             result = self.send_message(chat_id, response, self.get_main_menu())
             if result:
                 logger.info(f"Resposta com menu enviada para {chat_id}")
+
+    def send_contact_alert(self, user_id, user_name):
+        """Enviar alerta para @Webprontos quando alguém clicar em contato"""
+        try:
+            # Username do canal/usuário para receber alertas
+            alert_chat = "@Webprontos"
+
+            alert_text = f"""🚨 *ALERTA DE CONTATO*
+
+Um usuário solicitou informações de contato:
+
+👤 *Usuário:* {user_name}
+🆔 *ID:* `{user_id}`
+⏰ *Horário:* {datetime.now().strftime('%d/%m/%Y às %H:%M:%S')}
+
+💬 *Ação:* Usuário clicou no botão "Contato"
+
+Considere entrar em contato com este usuário para oferecer suporte personalizado."""
+
+            self.send_message(alert_chat, alert_text)
+            logger.info(f"Alerta de contato enviado para {alert_chat} - Usuário: {user_name} ({user_id})")
+
+        except Exception as e:
+            logger.error(f"Erro ao enviar alerta de contato: {e}")
 
     def handle_callback_query(self, callback_query):
         """Processar callback de botão"""
@@ -220,29 +252,33 @@ Use os botões abaixo para navegar pelos nossos serviços de suporte."""
         chat_id = callback_query['message']['chat']['id']
         message_id = callback_query['message']['message_id']
         data = callback_query['data']
+        user_id = callback_query['from']['id']
         user_name = callback_query.get('from', {}).get('first_name', 'Usuário')
-        
+
         logger.info(f"Callback recebido de {user_name}: {data}")
-        
+
         # Confirmar callback
         self.answer_callback_query(callback_id, "✅ Processando...")
-        
+
         if data == 'main_menu':
             text = "🔧 *Menu de Suporte*\n\nSelecione uma opção:"
             self.edit_message_text(chat_id, message_id, text, self.get_main_menu())
-            
+
         elif data == 'faq':
             text = "❓ *Perguntas Frequentes*\n\nSelecione uma categoria para ver as perguntas mais comuns:"
             self.edit_message_text(chat_id, message_id, text, self.get_faq_menu())
-            
+
         elif data == 'contact':
-            text = f"""📞 *Informações de Contato*
+            # Enviar alerta para @Webprontos
+            self.send_contact_alert(user_id, user_name)
 
-Olá {user_name}! Para suporte direto:
+            text = """📞 *Informações de Contato*
 
-• *Telegram:* @suporte_admin
-• *Email:* suporte@empresa.com
-• *WhatsApp:* (11) 99999-9999
+Entre em contato conosco através dos canais abaixo:
+
+*📧 Email:* suporte@empresa.com
+*💬 Telegram:* @suporte_empresa
+*📱 WhatsApp:* (11) 99999-9999
 
 *Horário de atendimento:*
 🕘 Segunda a Sexta: 9:00 - 18:00
@@ -250,15 +286,17 @@ Olá {user_name}! Para suporte direto:
 
 *Tempo de resposta:*
 ⚡ Chat: Até 2 horas
-📧 Email: Até 24 horas"""
-            
+📧 Email: Até 24 horas
+
+✅ *Nossa equipe foi notificada sobre seu interesse em contato!*"""
+
             keyboard = {
                 'inline_keyboard': [
                     [{'text': '🔙 Menu Principal', 'callback_data': 'main_menu'}]
                 ]
             }
             self.edit_message_text(chat_id, message_id, text, keyboard)
-            
+
         elif data == 'report_issue':
             import random
             ticket_id = random.randint(10000, 99999)
@@ -275,18 +313,18 @@ Seu ticket foi registrado em nosso sistema.
 • Mantenha este chat aberto para atualizações
 
 📝 Para adicionar mais informações, envie uma mensagem descrevendo o problema."""
-            
+
             keyboard = {
                 'inline_keyboard': [
                     [{'text': '🔙 Menu Principal', 'callback_data': 'main_menu'}]
                 ]
             }
             self.edit_message_text(chat_id, message_id, text, keyboard)
-            
+
         elif data == 'categories':
             text = "📋 *Categorias de Suporte*\n\nSelecione a categoria que melhor descreve seu problema:"
             self.edit_message_text(chat_id, message_id, text, self.get_categories_menu())
-            
+
         elif data.startswith('faq_'):
             category = data.replace('faq_', '')
             category_names = {
@@ -295,10 +333,10 @@ Seu ticket foi registrado em nosso sistema.
                 'app': 'Aplicativo',
                 'seguranca': 'Segurança'
             }
-            
+
             category_name = category_names.get(category, category.title())
             text = f"❓ *FAQ - {category_name}*\n\n"
-            
+
             # FAQ específica por categoria
             if category == 'tecnico':
                 text += "*1. Como resolver problemas de conexão?*\n"
@@ -317,9 +355,9 @@ Seu ticket foi registrado em nosso sistema.
             else:
                 text += f"*Perguntas sobre {category_name}*\n"
                 text += f"Em breve teremos mais FAQs sobre {category_name}.\n\n"
-            
+
             self.edit_message_text(chat_id, message_id, text, self.get_faq_menu())
-            
+
         elif data.startswith('category_'):
             category = data.replace('category_', '')
             category_names = {
@@ -328,7 +366,7 @@ Seu ticket foi registrado em nosso sistema.
                 'app': 'Aplicativo',
                 'conta': 'Gerenciamento de Conta'
             }
-            
+
             category_name = category_names.get(category, category.title())
             text = f"🔧 *Categoria: {category_name}*\n\n"
             text += f"Você selecionou *{category_name}*.\n\n"
@@ -337,7 +375,7 @@ Seu ticket foi registrado em nosso sistema.
             text += "• Nossa equipe especializada entrará em contato\n"
             text += "• Ou consulte nossa FAQ relacionada\n\n"
             text += "💬 *Envie uma mensagem* descrevendo seu problema!"
-            
+
             keyboard = {
                 'inline_keyboard': [
                     [{'text': f'❓ FAQ {category_name}', 'callback_data': f'faq_{category}'}],
@@ -350,7 +388,7 @@ Seu ticket foi registrado em nosso sistema.
         """Processar updates recebidos"""
         for update in updates:
             self.last_update_id = update['update_id']
-            
+
             try:
                 if 'message' in update:
                     self.handle_message(update['message'])
@@ -363,7 +401,7 @@ Seu ticket foi registrado em nosso sistema.
         """Executar bot"""
         logger.info("🤖 Iniciando Bot de Suporte com API Telegram...")
         self.running = True
-        
+
         # Teste inicial da API
         try:
             test_url = f"{self.api_url}/getMe"
@@ -381,7 +419,7 @@ Seu ticket foi registrado em nosso sistema.
         except Exception as e:
             logger.error(f"❌ Erro ao testar conexão com API: {e}")
             return
-        
+
         while self.running:
             try:
                 updates = self.get_updates()
@@ -389,7 +427,7 @@ Seu ticket foi registrado em nosso sistema.
                     logger.info(f"📨 Processando {len(updates)} updates")
                     self.process_updates(updates)
                 time.sleep(1)
-                
+
             except KeyboardInterrupt:
                 logger.info("🛑 Bot interrompido pelo usuário")
                 break
@@ -410,9 +448,9 @@ def main():
         return
 
     logger.info(f"🔑 Token configurado: ...{BOT_TOKEN[-10:]}")
-    
+
     bot = TelegramBot(BOT_TOKEN)
-    
+
     try:
         bot.run()
     except Exception as e:
