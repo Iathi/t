@@ -84,7 +84,11 @@ def start_bot():
         
         logging.info("🤖 Iniciando bot após verificação de conflitos...")
         from bot import main as bot_main
+<<<<<<< HEAD
         bot_main()
+=======
+        asyncio.run(bot_main())
+>>>>>>> 5634a1dc0d4af5ab743abdbd8c8f8892298dc8c2
         
     except Exception as e:
         logging.error(f"Erro ao iniciar bot: {e}")
@@ -93,7 +97,7 @@ def start_bot():
         try:
             logging.info("🔄 Tentando reiniciar o bot...")
             from bot import main as bot_main_retry
-            bot_main_retry()
+            asyncio.run(bot_main_retry())
         except Exception as e2:
             logging.error(f"Falha ao reiniciar bot: {e2}")
 

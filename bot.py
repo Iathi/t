@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 """
 Telegram Support Bot - Using telegram==0.0.1
@@ -6,10 +5,24 @@ Bot de Suporte para Telegram com API antiga
 """
 
 import logging
+<<<<<<< HEAD
 import time
 import json
 import requests
 import threading
+=======
+import asyncio
+
+from telegram.ext import (
+    Application,
+    ApplicationBuilder,
+    CommandHandler,
+    CallbackQueryHandler,
+    MessageHandler,
+    filters,
+)
+
+>>>>>>> 5634a1dc0d4af5ab743abdbd8c8f8892298dc8c2
 from config import BOT_TOKEN
 
 # Setup básico de logging
@@ -397,13 +410,22 @@ Seu ticket foi registrado em nosso sistema.
         logger.info("🛑 Parando bot...")
         self.running = False
 
+<<<<<<< HEAD
 def main():
     """Função principal"""
+=======
+async def main():
+    """Função principal para inicializar e executar o bot"""
+    setup_logger()
+    logger = logging.getLogger(__name__)
+
+>>>>>>> 5634a1dc0d4af5ab743abdbd8c8f8892298dc8c2
     if not BOT_TOKEN or BOT_TOKEN == "SEU_TOKEN_AQUI":
         logger.error("❌ Token do bot não configurado!")
         logger.error("Configure o token no arquivo config.py")
         return
 
+<<<<<<< HEAD
     logger.info(f"🔑 Token configurado: ...{BOT_TOKEN[-10:]}")
     
     bot = TelegramBot(BOT_TOKEN)
@@ -412,6 +434,46 @@ def main():
         bot.run()
     except Exception as e:
         logger.error(f"❌ Erro fatal ao executar bot: {e}")
+=======
+    logger.info("🤖 Iniciando Bot de Suporte...")
+
+    try:
+        # Inicializa o bot com ApplicationBuilder
+        application = (
+            ApplicationBuilder()
+            .token(BOT_TOKEN)
+            .build()
+        )
+
+        # Comandos
+        application.add_handler(CommandHandler("start", start))
+        application.add_handler(CommandHandler("help", help_command))
+        application.add_handler(CommandHandler("menu", menu_command))
+
+        # Callback de botões
+        application.add_handler(CallbackQueryHandler(handle_callback))
+
+        # Mensagens de texto
+        application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+
+        logger.info("✅ Bot de Suporte iniciado com sucesso!")
+
+        # Inicia o polling (modo assíncrono)
+        await application.run_polling(
+            allowed_updates=["message", "callback_query"],
+            drop_pending_updates=True,
+            stop_signals=None  # Evitar conflitos com sinais
+        )
+
+    except Exception as e:
+        if "Conflict" in str(e) and "getUpdates" in str(e):
+            logger.error("❌ Conflito detectado: Outra instância do bot está rodando. Aguardando...")
+            await asyncio.sleep(10)
+            logger.info("🔄 Tentando reiniciar após conflito...")
+            return
+        else:
+            logger.exception(f"❌ Erro ao iniciar o bot: {e}")
+>>>>>>> 5634a1dc0d4af5ab743abdbd8c8f8892298dc8c2
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
