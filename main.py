@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 """
 Telegram Support Bot - Main Entry Point
@@ -37,6 +36,8 @@ def kill_existing_bot_processes():
             try:
                 if proc.info['pid'] == current_pid:
                     continue
+                if proc.info['pid'] == 1:
+                    continue  # ⚠️ Evita matar o processo PID 1 (sistema/container)
                     
                 cmdline = proc.info['cmdline']
                 if cmdline and any('bot.py' in cmd or 'main.py' in cmd for cmd in cmdline):
