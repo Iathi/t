@@ -37,7 +37,7 @@ Olá! Eu sou seu assistente de suporte automatizado.
 Como posso ajudá-lo hoje?
 
 Use os botões abaixo para navegar pelos nossos serviços de suporte.""",
-            "support_contact": "@admin",
+            "support_contact": "@Webprontos",
             "support_email": "suporte@empresa.com",
             "auto_reply": True,
             "bot_name": "Bot de Suporte",
@@ -68,13 +68,13 @@ except Exception as e:
     print(f"Erro ao inicializar config: {e}")
     PANEL_CONFIG = {
         "bot_settings": {
-            "welcome_message": """🤖 *Bem-vindo ao Sistema de Suporte!*
+            "welcome_message": """🤖 *Bem-vindo ao Sistema de Suporte Webpronto Automação!*
 
 Olá! Eu sou seu assistente de suporte automatizado.
 Como posso ajudá-lo hoje?
 
 Use os botões abaixo para navegar pelos nossos serviços de suporte.""",
-            "support_contact": "@admin",
+            "support_contact": "@WebPronto",
             "support_email": "suporte@empresa.com",
             "auto_reply": True,
             "bot_name": "Bot de Suporte",
@@ -101,7 +101,7 @@ def get_safe_config_value(config, keys, default=""):
 
 MESSAGES = {
     "welcome": get_safe_config_value(PANEL_CONFIG, ["bot_settings", "welcome_message"], 
-                                   """🤖 *Bem-vindo ao Sistema de Suporte!*
+                                   """🤖 *Bem-vindo ao Sistema de Suporte Webpronto Automação!*
 
 Olá! Eu sou seu assistente de suporte automatizado.
 Como posso ajudá-lo hoje?
@@ -109,5 +109,5 @@ Como posso ajudá-lo hoje?
 Use os botões abaixo para navegar pelos nossos serviços de suporte."""),
     "help": "Use os comandos /start, /menu ou /help para navegar.",
     "error": "Ocorreu um erro. Tente novamente mais tarde.",
-    "contact_info": f"Contato: {get_safe_config_value(PANEL_CONFIG, ['bot_settings', 'support_contact'], '@admin')}\nEmail: {get_safe_config_value(PANEL_CONFIG, ['bot_settings', 'support_email'], 'suporte@empresa.com')}"
+    "contact_info": f"Contato: {get_safe_config_value(PANEL_CONFIG, ['bot_settings', 'support_contact'], '@Webprontos')}\nEmail: {get_safe_config_value(PANEL_CONFIG, ['bot_settings', 'support_email'], 'suporte@empresa.com')}"
 }
