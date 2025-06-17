@@ -1,7 +1,3 @@
-"""
-Configurações do Bot de Suporte
-"""
-
 import os
 from pathlib import Path
 from dotenv import load_dotenv

@@ -1,15 +1,9 @@
-<<<<<<< HEAD
 telegram==0.0.1
-=======
 python-telegram-bot==20.8
->>>>>>> 5634a1dc0d4af5ab743abdbd8c8f8892298dc8c2
 flask>=3.1.1
 flask-cors>=6.0.1
 httpx>=0.24.0
 psutil
-<<<<<<< HEAD
 python-dotenv
 telegram
 requests
-=======
->>>>>>> 5634a1dc0d4af5ab743abdbd8c8f8892298dc8c2

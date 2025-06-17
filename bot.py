@@ -5,7 +5,6 @@ Bot de Suporte para Telegram com API antiga
 """
 
 import logging
-<<<<<<< HEAD
 import time
 import json
 import requests
@@ -22,7 +21,6 @@ from telegram.ext import (
     filters,
 )
 
->>>>>>> 5634a1dc0d4af5ab743abdbd8c8f8892298dc8c2
 from config import BOT_TOKEN
 
 # Setup básico de logging
@@ -410,7 +408,6 @@ Seu ticket foi registrado em nosso sistema.
         logger.info("🛑 Parando bot...")
         self.running = False
 
-<<<<<<< HEAD
 def main():
     """Função principal"""
 =======
@@ -419,13 +416,11 @@ async def main():
     setup_logger()
     logger = logging.getLogger(__name__)
 
->>>>>>> 5634a1dc0d4af5ab743abdbd8c8f8892298dc8c2
     if not BOT_TOKEN or BOT_TOKEN == "SEU_TOKEN_AQUI":
         logger.error("❌ Token do bot não configurado!")
         logger.error("Configure o token no arquivo config.py")
         return
 
-<<<<<<< HEAD
     logger.info(f"🔑 Token configurado: ...{BOT_TOKEN[-10:]}")
     
     bot = TelegramBot(BOT_TOKEN)
@@ -473,7 +468,6 @@ async def main():
             return
         else:
             logger.exception(f"❌ Erro ao iniciar o bot: {e}")
->>>>>>> 5634a1dc0d4af5ab743abdbd8c8f8892298dc8c2
 
 if __name__ == "__main__":
     asyncio.run(main())
