@@ -80,8 +80,39 @@ Selecione uma categoria para ver as perguntas mais comuns:
 
 async def show_contact_info(query):
     """Mostrar informações de contato"""
+    from datetime import datetime
+    
+    # Enviar alerta para @Webprontos
+    user = query.from_user
+    alert_text = f"""🚨 *ALERTA DE CONTATO*
+
+Um usuário solicitou informações de contato:
+
+👤 *Usuário:* {user.first_name or 'N/A'} {user.last_name or ''}
+🆔 *ID:* `{user.id}`
+📱 *Username:* @{user.username or 'N/A'}
+⏰ *Horário:* {datetime.now().strftime('%d/%m/%Y às %H:%M:%S')}
+
+💬 *Ação:* Usuário clicou no botão "Contato"
+
+Considere entrar em contato com este usuário para oferecer suporte personalizado."""
+    
+    try:
+        # Enviar para @Webprontos
+        await query.bot.send_message(
+            chat_id="@Webprontos",
+            text=alert_text,
+            parse_mode=ParseMode.MARKDOWN
+        )
+        logger.info(f"Alerta de contato enviado para @Webprontos - Usuário: {user.first_name} ({user.id})")
+    except Exception as e:
+        logger.error(f"Erro ao enviar alerta de contato: {e}")
+    
+    # Mostrar informações de contato com confirmação
+    contact_text = MESSAGES["contact_info"] + "\n\n✅ *Nossa equipe foi notificada sobre seu interesse em contato!*"
+    
     await query.edit_message_text(
-        MESSAGES["contact_info"],
+        contact_text,
         parse_mode=ParseMode.MARKDOWN,
         reply_markup=get_main_menu()
     )
