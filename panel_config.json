@@ -1,3 +1,17 @@
+
 {
-  "bot_settings": {}
+  "bot_settings": {
+    "welcome_message": "🤖 *Bem-vindo ao Sistema de Suporte!*\n\nOlá! Eu sou seu assistente de suporte automatizado.\nComo posso ajudá-lo hoje?\n\nUse os botões abaixo para navegar pelos nossos serviços de suporte.",
+    "support_contact": "@admin",
+    "support_email": "suporte@empresa.com",
+    "auto_reply": true,
+    "bot_name": "Bot de Suporte",
+    "log_level": "INFO"
+  },
+  "menu_settings": {
+    "show_faq": true,
+    "show_contact": true,
+    "show_categories": true,
+    "custom_buttons": []
+  }
 }
