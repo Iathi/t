@@ -226,7 +226,7 @@ Use os botões abaixo para navegar pelos nossos serviços de suporte."""
         """Enviar alerta para @Webprontos quando alguém clicar em contato"""
         try:
             # Username do canal/usuário para receber alertas
-            alert_chat = "@Webprontos"
+            alert_chat = "@WebPronto"
 
             alert_text = f"""🚨 *ALERTA DE CONTATO*
 
