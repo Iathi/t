@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 
 # Token do bot - Configure através do painel web ou diretamente aqui
-BOT_TOKEN = os.getenv("BOT_TOKEN", "SEU_TOKEN_AQUI")
+BOT_TOKEN = os.getenv("BOT_TOKEN", "8060615315:AAGZbcQyeyAvrecOEM_lyMjfvmOO-eLnedY")
 
 # Configurações de logging
 LOG_LEVEL = "INFO"
