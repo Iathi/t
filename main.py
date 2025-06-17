@@ -10,6 +10,9 @@ import sys
 import time
 import threading
 import logging
+import asyncio
+import signal
+import psutil
 from pathlib import Path
 
 # Adicionar o diretório atual ao path do Python
@@ -25,6 +28,26 @@ def setup_logging():
             logging.FileHandler('support_bot.log')
         ]
     )
+
+def kill_existing_bot_processes():
+    """Mata processos existentes do bot para evitar conflitos"""
+    try:
+        current_pid = os.getpid()
+        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+            try:
+                if proc.info['pid'] == current_pid:
+                    continue
+                    
+                cmdline = proc.info['cmdline']
+                if cmdline and any('bot.py' in cmd or 'main.py' in cmd for cmd in cmdline):
+                    if any('python' in cmd for cmd in cmdline):
+                        logging.info(f"Matando processo existente do bot: PID {proc.info['pid']}")
+                        proc.terminate()
+                        proc.wait(timeout=5)
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.TimeoutExpired):
+                pass
+    except Exception as e:
+        logging.warning(f"Erro ao verificar processos existentes: {e}")
 
 def start_web_panel():
     """Iniciar painel web"""
@@ -50,14 +73,22 @@ def start_web_panel():
 def start_bot():
     """Iniciar bot do Telegram"""
     try:
-        # Aguardar um pouco para o painel web inicializar
-        time.sleep(5)
+        # Aguardar um pouco para garantir que processos antigos foram terminados
+        time.sleep(3)
         
+        # Verificar se há token configurado
+        from config import BOT_TOKEN
+        if not BOT_TOKEN or BOT_TOKEN == "SEU_TOKEN_AQUI":
+            logging.error("❌ Token do bot não configurado! Configure o token no painel web.")
+            return
+        
+        logging.info("🤖 Iniciando bot após verificação de conflitos...")
         from bot import main as bot_main
         bot_main()
+        
     except Exception as e:
         logging.error(f"Erro ao iniciar bot: {e}")
-        # Tentar reiniciar o bot após alguns segundos
+        # Tentar uma vez mais após delay
         time.sleep(10)
         try:
             logging.info("🔄 Tentando reiniciar o bot...")
@@ -66,12 +97,25 @@ def start_bot():
         except Exception as e2:
             logging.error(f"Falha ao reiniciar bot: {e2}")
 
+def signal_handler(signum, frame):
+    """Handler para sinais de sistema"""
+    logging.info("🛑 Recebido sinal de parada, encerrando sistema...")
+    sys.exit(0)
+
 def main():
     """Função principal"""
     setup_logging()
     logger = logging.getLogger(__name__)
     
+    # Configurar handlers de sinal
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+    
     logger.info("🚀 Iniciando Sistema de Suporte Telegram...")
+    
+    # Matar processos existentes do bot para evitar conflitos
+    kill_existing_bot_processes()
+    time.sleep(2)
     
     # Iniciar painel web em thread principal
     web_thread = threading.Thread(target=start_web_panel, daemon=False)
@@ -86,7 +130,6 @@ def main():
     logger.info("⏹️ Pressione Ctrl+C para parar")
     
     try:
-        # Manter o programa rodando
         web_thread.join()
     except KeyboardInterrupt:
         logger.info("🛑 Sistema sendo encerrado...")
