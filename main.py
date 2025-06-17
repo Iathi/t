@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 """
 Telegram Support Bot - Main Entry Point
@@ -10,6 +9,7 @@ import sys
 import time
 import threading
 import logging
+import asyncio
 from pathlib import Path
 
 # Adicionar o diretório atual ao path do Python
@@ -48,21 +48,18 @@ def start_web_panel():
         logging.error(f"Erro ao iniciar painel web: {e}")
 
 def start_bot():
-    """Iniciar bot do Telegram"""
+    """Iniciar bot do Telegram (async executado com asyncio.run)"""
     try:
-        # Aguardar um pouco para o painel web inicializar
         time.sleep(5)
-        
-        from bot import main as bot_main
-        bot_main()
+        from bot import main as bot_main  # função async
+        asyncio.run(bot_main())
     except Exception as e:
         logging.error(f"Erro ao iniciar bot: {e}")
-        # Tentar reiniciar o bot após alguns segundos
         time.sleep(10)
         try:
             logging.info("🔄 Tentando reiniciar o bot...")
             from bot import main as bot_main_retry
-            bot_main_retry()
+            asyncio.run(bot_main_retry())
         except Exception as e2:
             logging.error(f"Falha ao reiniciar bot: {e2}")
 
@@ -86,7 +83,6 @@ def main():
     logger.info("⏹️ Pressione Ctrl+C para parar")
     
     try:
-        # Manter o programa rodando
         web_thread.join()
     except KeyboardInterrupt:
         logger.info("🛑 Sistema sendo encerrado...")
