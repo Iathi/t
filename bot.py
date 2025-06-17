@@ -57,11 +57,18 @@ async def main():
         # Inicia o polling (modo assíncrono)
         await application.run_polling(
             allowed_updates=["message", "callback_query"],
-            drop_pending_updates=True
+            drop_pending_updates=True,
+            stop_signals=None  # Evitar conflitos com sinais
         )
 
     except Exception as e:
-        logger.exception(f"❌ Erro ao iniciar o bot: {e}")
+        if "Conflict" in str(e) and "getUpdates" in str(e):
+            logger.error("❌ Conflito detectado: Outra instância do bot está rodando. Aguardando...")
+            await asyncio.sleep(10)
+            logger.info("🔄 Tentando reiniciar após conflito...")
+            return
+        else:
+            logger.exception(f"❌ Erro ao iniciar o bot: {e}")
 
 if __name__ == "__main__":
     asyncio.run(main())
