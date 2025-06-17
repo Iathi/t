@@ -99,6 +99,18 @@ class TelegramBot:
                 return result
             else:
                 logger.error(f"Erro ao editar mensagem: {result}")
+                
+                # Tentar sem Markdown se houver erro de parsing
+                if "parse entities" in str(result.get('description', '')):
+                    logger.info("Tentando enviar sem formatação Markdown...")
+                    payload['parse_mode'] = None
+                    response = requests.post(url, json=payload)
+                    result = response.json()
+                    
+                    if result.get('ok'):
+                        logger.info(f"Mensagem editada com sucesso (sem Markdown)")
+                        return result
+                
                 return None
 
         except Exception as e:
@@ -226,7 +238,7 @@ Use os botões abaixo para navegar pelos nossos serviços de suporte."""
         """Enviar alerta para @Webprontos quando alguém clicar em contato"""
         try:
             # Username do canal/usuário para receber alertas
-            alert_chat = "@WebPronto"
+            alert_chat = "@Webprontos"
 
             alert_text = f"""🚨 *ALERTA DE CONTATO*
 
@@ -240,8 +252,29 @@ Um usuário solicitou informações de contato:
 
 Considere entrar em contato com este usuário para oferecer suporte personalizado."""
 
-            self.send_message(alert_chat, alert_text)
-            logger.info(f"Alerta de contato enviado para {alert_chat} - Usuário: {user_name} ({user_id})")
+            result = self.send_message(alert_chat, alert_text)
+            
+            if result:
+                logger.info(f"✅ Alerta de contato enviado para {alert_chat} - Usuário: {user_name} ({user_id})")
+                
+                # Enviar mensagem de confirmação para o usuário
+                confirmation_text = f"""✅ *Confirmação de Contato*
+
+Olá {user_name}!
+
+Sua solicitação de contato foi enviada com sucesso para nossa equipe de suporte.
+
+🔔 *Status:* Mensagem enviada e confirmada
+⏰ *Enviado em:* {datetime.now().strftime('%d/%m/%Y às %H:%M:%S')}
+
+Nossa equipe já foi notificada e entrará em contato com você em breve.
+
+Obrigado pela sua confiança! 🙏"""
+
+                self.send_message(user_id, confirmation_text)
+                logger.info(f"Confirmação enviada para o usuário {user_name} ({user_id})")
+            else:
+                logger.error(f"Falha ao enviar alerta para {alert_chat}")
 
         except Exception as e:
             logger.error(f"Erro ao enviar alerta de contato: {e}")
@@ -276,9 +309,9 @@ Considere entrar em contato com este usuário para oferecer suporte personalizad
 
 Entre em contato conosco através dos canais abaixo:
 
-*📧 Email:* suporte@empresa.com
-*💬 Telegram:* @suporte_empresa
-*📱 WhatsApp:* (11) 99999-9999
+📧 *Email:* suporte@empresa.com
+💬 *Telegram:* @suporte_empresa
+📱 *WhatsApp:* (11) 99999-9999
 
 *Horário de atendimento:*
 🕘 Segunda a Sexta: 9:00 - 18:00
@@ -288,7 +321,9 @@ Entre em contato conosco através dos canais abaixo:
 ⚡ Chat: Até 2 horas
 📧 Email: Até 24 horas
 
-✅ *Nossa equipe foi notificada sobre seu interesse em contato!*"""
+✅ *Nossa equipe foi notificada sobre seu interesse em contato!*
+
+🔔 *Confirmação:* Sua solicitação foi enviada com sucesso! Nossa equipe já está sendo notificada e entrará em contato em breve."""
 
             keyboard = {
                 'inline_keyboard': [
