@@ -13,7 +13,7 @@ if os.path.exists('.env'):
                 os.environ[key] = value
 
 # Token do bot (obtido do BotFather)
-BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "8067162502:AAGp2Qsr51XFIGEwGtCNOuXM0m_-9OHzTzs")
+BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "7195198757:AAEzPTbU8el87VrGKGQ6P9a_TDZ0h-txuIg")
 
 # Configurações de logging
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
