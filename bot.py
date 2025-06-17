@@ -409,7 +409,7 @@ Seu ticket foi registrado em nosso sistema.
 
 def main():
     """Função principal"""
-=======
+
 async def main():
     """Função principal para inicializar e executar o bot"""
     setup_logger()
@@ -428,7 +428,7 @@ async def main():
         bot.run()
     except Exception as e:
         logger.error(f"❌ Erro fatal ao executar bot: {e}")
-=======
+        
     logger.info("🤖 Iniciando Bot de Suporte...")
 
     try:
